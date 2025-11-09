@@ -1,7 +1,6 @@
 FROM webdevops/php-nginx:7.4
-MAINTAINER rexshi <rexshi@pgyer.com>
 
-EXPOSE 80 22
+EXPOSE 80 22 81
 ENV GO111MODULE=off
 
 RUN apt-get update -y \

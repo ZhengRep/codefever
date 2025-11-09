@@ -2,7 +2,7 @@ package jsonHttpClient
 
 import (
 	"fmt"
-  	"io"
+	"io"
 	"bytes"
 	"net/http"
 	"io/ioutil"

@@ -1,17 +1,17 @@
 version: "3"
 services:
   codefever:
-    image: pgyer/codefever-community-lite:latest
+    image: pgyer/codefever-community-lite-dev:latest
     ports:
-      - "80:80"
+      - "81:80"
       - "22:22"
     depends_on:
       - db
     volumes:
-      - /data/git-storage:/data/www/codefever-community/git-storage
+      - /dev-data/git-storage:/data/www/codefever-community/git-storage
     environment:
       DB_HOST: "db"
-      DB_PORT: "3306"
+      DB_PORT: "3307"
       DB_USER: "root"
       DB_PASS: "1234" # Need to be the same as MYSQL_ROOT_PASSWORD
       DB_NAME: "codefever_community"
