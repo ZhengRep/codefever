@@ -2,8 +2,8 @@
 
 # chkconfig: 2345 50 20
 
-BASE=/data/www/codefever-community
-PHP=/usr/local/php/bin/php
+BASE=~/Desktop/codefever-community
+PHP=/usr/bin/php
 
 SRC=$BASE/misc/modify_authorized_keys.php
 SCRIPTNAME=$BASE/misc/modify_authorized_keys

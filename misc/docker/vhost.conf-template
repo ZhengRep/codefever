@@ -5,7 +5,7 @@ server {
     listen 80;
     server_name localhost;
     index index.php index.html index.htm;
-    root /data/www/codefever-community/www/;
+    root ~/Desktop/codefever-community/www/;
 
     location ~* ^\/[0-9a-z_]+\/[0-9a-z_]+\.git {
         proxy_pass http://127.0.0.1:27555;
@@ -42,7 +42,7 @@ server {
     listen 80;
     server_name localhost-dev;
     index index.php index.html index.htm;
-    root /data/www/codefever-community/www/;
+    root ~/Desktop/codefever-community/www/;
 
     location ~* ^\/[0-9a-z_]+\/[0-9a-z_]+\.git {
         proxy_pass http://127.0.0.1:27555;
