@@ -1,6 +1,7 @@
 !*/
 
 .vscode
+.idea
 /env.yaml
 /config.yaml
 /node_modules

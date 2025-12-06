@@ -1,0 +1,1 @@
+sudo docker build -t zheng/codefever-community-lite:latest .

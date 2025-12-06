@@ -1,5 +1,4 @@
 FROM webdevops/php-nginx:7.4
-MAINTAINER rexshi <rexshi@pgyer.com>
 
 EXPOSE 80 22
 ENV GO111MODULE=off
@@ -27,8 +26,9 @@ RUN docker-service enable ssh && docker-service enable cron
 # Codefever repo
 RUN mkdir -p /data/www \
 && cd /data/www \
-&& git clone https://github.com/PGYER/codefever.git codefever-community \
-&& cd codefever-community
+&& git clone https://github.com/ZhengRep/codefever.git codefever-community \
+&& cd codefever-community \
+&& git checkout feature/build_image
 
 # Nginx
 COPY ./misc/docker/vhost.conf-template /opt/docker/etc/nginx/vhost.conf
