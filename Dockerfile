@@ -1,10 +1,10 @@
-FROM webdevops/php-nginx:7.4
+FROM webdevops/php-nginx
 
 EXPOSE 80 22
 ENV GO111MODULE=off
 
 RUN apt-get update -y \
-&& apt-get install libyaml-dev git golang-go zip sendmail mailutils mariadb-client vim -y \
+&& apt-get install libyaml-dev git golang-go zip sendmail mailutils mariadb-client vim php-dev -y \
 && pecl install yaml \
 && docker-php-ext-enable yaml
 
@@ -26,8 +26,9 @@ RUN docker-service enable ssh && docker-service enable cron
 # Codefever repo
 RUN mkdir -p /data/www \
 && cd /data/www \
-&& git clone https://github.com/PGYER/codefever.git codefever-community \
-&& cd codefever-community
+&& git clone https://github.com/ZhengRep/codefever.git codefever-community \
+&& cd codefever-community \
+&& git checkout feature/dev
 
 # Nginx
 COPY ./misc/docker/vhost.conf-template /opt/docker/etc/nginx/vhost.conf
