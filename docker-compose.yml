@@ -1,12 +1,12 @@
 services:
   codefever:
-    image: pgyer/codefever-community-lite:latest
+    image: zheng/codefever-community-lite:latest
     container_name: codefever
     ports:
       - "82:80"
       #- "22:22"
-    # depends_on:
-    #   - codefever-mysql
+    depends_on:
+      - codefever-mysql
     volumes:
       - /data/codefever/git-storage:/data/www/codefever-community/git-storage
       - /data/codefever/logs:/data/www/codefever-community/application/logs
@@ -22,7 +22,7 @@ services:
     container_name: codefever-mysql
     privileged: true
     volumes:
-      - /dev-data/codefever/mysql:/var/lib/mysql
+      - /data/codefever/mysql:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: "1234"
     command: [

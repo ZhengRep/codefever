@@ -3,16 +3,24 @@ FROM webdevops/php-nginx:latest
 EXPOSE 80 22
 ENV GO111MODULE=off
 
-RUN echo 'curl -i -x '
+RUN echo 'Acquire::http::Proxy "http://192.168.31.218:7890/";Acquire::https::Proxy "http://192.168.31.218:7890/";' > /etc/apt/apt.conf.d/01proxy
 
-RUN echo 'Acquire::http::Proxy "http://192.168.31.218:7890/";Acquire::https::Proxy "http://192.168.31.218:7890/";' > /etc/apt/apt.conf.d/01proxy && \
-    apt-get update -y
+# Codefever repo
+RUN mkdir -p /data/www \
+&& cd /data/www \
+&& git clone https://github.com/ZhengRep/codefever.git codefever-community \
+&& cd codefever-community \
+&& git checkout feature/build_image
 
-RUN apt update -y \
-&& apt install libyaml-dev php-dev git golang-go zip sendmail mailutils mariadb-client vim -y \
+RUN cp /data/www/codefdever-community/misc/sources.list /etc/apt/ \
+&& apt update -y
+
+RUN apt install php7.4-dev php-mbstring -y
+
+RUN apt install libyaml-dev git golang-go zip sendmail mailutils mariadb-client vim -y \
 && pecl install yaml
 
-RUN echo "extension=yaml.so" > /etc/php/7.2/mods-available/yaml.ini \
+RUN echo "extension=yaml.so" > /etc/php/7.4/mods-available/yaml.ini \
     && phpenmod yaml
 
 # Nodejs
@@ -29,13 +37,6 @@ RUN cd /usr/local \
 
 # SSH
 RUN docker-service enable ssh && docker-service enable cron
-
-# Codefever repo
-RUN mkdir -p /data/www \
-&& cd /data/www \
-&& git clone https://github.com/ZhengRep/codefever.git codefever-community \
-&& cd codefever-community \
-&& git checkout feature/build_image
 
 # Nginx
 COPY ./misc/docker/vhost.conf-template /opt/docker/etc/nginx/vhost.conf
@@ -54,8 +55,8 @@ COPY misc/docker/supervisor-codefever-http-gateway.conf /opt/docker/etc/supervis
 
 # Configs
 RUN useradd -rm git \
-    && mkdir /usr/local/php/bin \
-    && ln -s /usr/local/bin/php /usr/local/php/bin/php \
+    # && mkdir /usr/local/php/bin \
+    # && ln -s /usr/bin/php /usr/local/php/bin/php \
     && cd /data/www/codefever-community/misc \
     && cp ./codefever-service-template /etc/init.d/codefever \
     && cp ../config.template.yaml ../config.yaml \
@@ -69,9 +70,10 @@ RUN useradd -rm git \
     && chown -R git:git ../file-storage \
     && chown -R git:git ../misc \
     && chmod +x /opt/docker/etc/supervisor.d/codefever-modify-authorized-keys.conf \
-    && chmod +x /opt/docker/etc/supervisor.d/codefever-http-gateway.conf \
-    && cd ../application/libraries/composerlib/ \
-    && php ./composer.phar install
+    && chmod +x /opt/docker/etc/supervisor.d/codefever-http-gateway.conf
+
+RUN cd /data/www/codefever-community/application/libraries/composerlib/ \
+&& php ./composer.phar install
 
 # Cron
 RUN docker-cronjob '* * * * *  sh /data/www/codefever-community/application/backend/codefever_schedule.sh'
