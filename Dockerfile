@@ -1,12 +1,19 @@
-FROM webdevops/php-nginx:7.4
+FROM webdevops/php-nginx:latest
 
 EXPOSE 80 22
 ENV GO111MODULE=off
 
-RUN apt-get update -y \
-&& apt-get install libyaml-dev git golang-go zip sendmail mailutils mariadb-client vim -y \
-&& pecl install yaml \
-&& docker-php-ext-enable yaml
+RUN echo 'curl -i -x '
+
+RUN echo 'Acquire::http::Proxy "http://192.168.31.218:7890/";Acquire::https::Proxy "http://192.168.31.218:7890/";' > /etc/apt/apt.conf.d/01proxy && \
+    apt-get update -y
+
+RUN apt update -y \
+&& apt install libyaml-dev php-dev git golang-go zip sendmail mailutils mariadb-client vim -y \
+&& pecl install yaml
+
+RUN echo "extension=yaml.so" > /etc/php/7.2/mods-available/yaml.ini \
+    && phpenmod yaml
 
 # Nodejs
 RUN cd /usr/local \

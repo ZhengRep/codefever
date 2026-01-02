@@ -1,30 +1,30 @@
-version: "3"
 services:
   codefever:
     image: pgyer/codefever-community-lite:latest
+    container_name: codefever
     ports:
-      - "80:80"
-      - "22:22"
-    depends_on:
-      - db
+      - "82:80"
+      #- "22:22"
+    # depends_on:
+    #   - codefever-mysql
     volumes:
-      - /data/git-storage:/data/www/codefever-community/git-storage
-      - /data/logs:/data/www/codefever-community/application/logs
+      - /data/codefever/git-storage:/data/www/codefever-community/git-storage
+      - /data/codefever/logs:/data/www/codefever-community/application/logs
     environment:
-      DB_HOST: "db"
+      DB_HOST: codefever-mysql
       DB_PORT: "3306"
       DB_USER: "root"
-      DB_PASS: "123456" # Need to be the same as MYSQL_ROOT_PASSWORD
+      DB_PASS: "1234" # Need to be the same as MYSQL_ROOT_PASSWORD
       DB_NAME: "codefever_community"
 
-  db:
+  codefever-mysql:
     image: mysql:5.7.31
-    restart: always
-    #privileged: true
+    container_name: codefever-mysql
+    privileged: true
     volumes:
-      - /data/mysql:/var/lib/mysql
+      - /dev-data/codefever/mysql:/var/lib/mysql
     environment:
-      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_ROOT_PASSWORD: "1234"
     command: [
         '--character-set-server=utf8mb4',
         '--collation-server=utf8mb4_general_ci',
