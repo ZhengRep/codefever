@@ -1,6 +1,6 @@
-FROM webdevops/php-nginx:latest
+FROM webdevops/php-nginx:7.4
 
-EXPOSE 80 22
+EXPOSE 80 22    
 ENV GO111MODULE=off
 
 RUN echo 'Acquire::http::Proxy "http://192.168.31.218:7890/";Acquire::https::Proxy "http://192.168.31.218:7890/";' > /etc/apt/apt.conf.d/01proxy
@@ -12,16 +12,25 @@ RUN mkdir -p /data/www \
 && cd codefever-community \
 && git checkout feature/build_image
 
-RUN cp /data/www/codefdever-community/misc/sources.list /etc/apt/ \
-&& apt update -y
+RUN cd /etc/apt \
+&& rm sources.list \
+&& cp /data/www/codefever-community/misc/sources.list /etc/apt/ \
+&& cp /data/www/codefever-community/misc/nginx.list /etc/apt/sources.list.d \
+&& wget https://nginx.org/keys/nginx_signing.key | gpg --dearmor | sudo tee /usr/share/keyrings/nginx-archive-keyring.gpg
+# && apt update -y \
+# && apt install software-properties-common -y \
+# && add-apt-repository ppa:ondrej/php -y
 
-RUN apt install php7.4-dev php-mbstring -y
+RUN apt update -y
+# && apt install php-dev -y
 
 RUN apt install libyaml-dev git golang-go zip sendmail mailutils mariadb-client vim -y \
 && pecl install yaml
 
-RUN echo "extension=yaml.so" > /etc/php/7.4/mods-available/yaml.ini \
-    && phpenmod yaml
+# RUN echo "extension=yaml.so" > /etc/php/7.4/mods-available/yaml.ini \
+#     && phpenmod yaml
+RUN pecl install yaml \
+&& docker-php-ext-enable yaml
 
 # Nodejs
 RUN cd /usr/local \
@@ -55,8 +64,8 @@ COPY misc/docker/supervisor-codefever-http-gateway.conf /opt/docker/etc/supervis
 
 # Configs
 RUN useradd -rm git \
-    # && mkdir /usr/local/php/bin \
-    # && ln -s /usr/bin/php /usr/local/php/bin/php \
+    && mkdir /usr/local/php/bin \
+    && ln -s /usr/bin/php /usr/local/php/bin/php \
     && cd /data/www/codefever-community/misc \
     && cp ./codefever-service-template /etc/init.d/codefever \
     && cp ../config.template.yaml ../config.yaml \
